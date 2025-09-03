@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quiz sistemas Integrados</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f9;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+    }
+    .container {
+      text-align: center;
+      width: 70%;
+      height: 95%;
+      border: 5px solid black;
+      padding-bottom: 40px;
+      padding-top: 40px;
+    }
+    h1 {
+        font-size: 50px;
+        margin-bottom: 70px;
+        margin-top: 0px;
+    }
+    .quiz-container {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      width: 400px;
+      text-align: center;
+      margin: 0 auto;
+    }
+    h2 {
+      margin-bottom: 20px;
+    }
+    .btn {
+      display: block;
+      background: #007bff;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 10px;
+      margin: 8px 0;
+      cursor: pointer;
+      transition: background 0.3s;
+      width: 100%;
+    }
+    .btn:hover {
+        background: #0056b3;
+    }
+    #next-btn {
+        display: none;
+        background: #28a745;
+        margin-top: 20px;
+        width: 200px;
+        background: #007bff;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Quiz Sistemas Integrados</h1>
+    <div class="quiz-container">
+      <h2 id="question">Pergunta aqui</h2>
+      <div id="answer-buttons"></div>
+  </div>
+</div>
+<button id="next-btn" class="btn">Próxima</button>
+
+  <script>
+    const questions = [
+      {
+        question: "O que são sistemas integrados?",
+        answers: [
+          { text: "a) Softwares usados apenas para controle financeiro", correct: false },
+          { text: "b) Sistemas que conectam e centralizam diferentes áreas de uma empresa", correct: true },
+          { text: "c) Programas de edição de textos e planilhas", correct: false },
+          { text: "d) Ferramentas usadas apenas na produção", correct: false }
+        ]
+      },
+      {
+        question: " Qual dos itens abaixo NÃO é considerado um desafio comum na implementação de um ERP?",
+        answers: [
+          { text: "a) Custos elevados de implantação", correct: false },
+          { text: "b) Resistência à mudança por parte dos colaboradores", correct: false },
+          { text: "c) Integração de dados de diferentes áreas", correct: false },
+          { text: "d) Aumento imediato e garantido da lucratividade", correct: true }
+        ]
+      },
+      {
+        question: "Em relação ao impacto estratégico do ERP, qual das alternativas representa uma vantagem competitiva que ele pode gerar para a empresa?",
+        answers: [
+          { text: "a) Aumento da dependência exclusiva de um setor específico.", correct: false },
+          { text: "b) Melhoria na tomada de decisões por meio de informações integradas e em tempo real.", correct: true },
+          { text: "c) Redução da necessidade de comunicação entre os diferentes setores da empresa.", correct: false },
+          { text: "d) Eliminação completa da necessidade de controles financeiros e relatórios.", correct: false }
+        ]
+      }
+    ];
+
+    const questionElement = document.getElementById("question");
+    const answerButtons = document.getElementById("answer-buttons");
+    const nextButton = document.getElementById("next-btn");
+
+    let currentQuestionIndex = 0;
+    let score = 0;
+
+    function startQuiz() {
+      currentQuestionIndex = 0;
+      score = 0;
+      nextButton.innerHTML = "Próxima";
+      showQuestion();
+    }
+
+    function showQuestion() {
+      resetState();
+      let currentQuestion = questions[currentQuestionIndex];
+      let questionNo = currentQuestionIndex + 1;
+      questionElement.innerHTML = questionNo + ". " + currentQuestion.question;
+
+      currentQuestion.answers.forEach(answer => {
+        const button = document.createElement("button");
+        button.innerHTML = answer.text;
+        button.classList.add("btn");
+        answerButtons.appendChild(button);
+        if (answer.correct) {
+          button.dataset.correct = answer.correct;
+        }
+        button.addEventListener("click", selectAnswer);
+      });
+    }
+
+    function resetState() {
+      nextButton.style.display = "none";
+      while (answerButtons.firstChild) {
+        answerButtons.removeChild(answerButtons.firstChild);
+      }
+    }
+
+    function selectAnswer(e) {
+      const selectedBtn = e.target;
+      const isCorrect = selectedBtn.dataset.correct === "true";
+      if (isCorrect) {
+        selectedBtn.style.background = "#28a745";
+        score++;
+      } else {
+        selectedBtn.style.background = "#dc3545";
+      }
+
+      Array.from(answerButtons.children).forEach(button => {
+        if (button.dataset.correct === "true") {
+          button.style.background = "#28a745";
+        }
+        button.disabled = true;
+      });
+      nextButton.style.display = "block";
+    }
+
+    function showScore() {
+      resetState();
+      questionElement.innerHTML = `Você acertou ${score} de ${questions.length}!`;
+      nextButton.innerHTML = "Jogar Novamente";
+      nextButton.style.display = "block";
+    }
+
+    function handleNextButton() {
+      currentQuestionIndex++;
+      if (currentQuestionIndex < questions.length) {
+        showQuestion();
+      } else {
+        showScore();
+      }
+    }
+
+    nextButton.addEventListener("click", () => {
+      if (currentQuestionIndex < questions.length) {
+        handleNextButton();
+      } else {
+        startQuiz();
+      }
+    });
+
+    startQuiz();
+  </script>
+</body>
+</html>
